@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% block title %}Diagnóstico{% endblock %}
+{% block content %}
+<h2>Consultar diagnóstico</h2>
+<div class="card" style="max-width:500px;">
+  <form method="post" style="display:flex; gap:10px; align-items:center;">
+    <select name="type" style="flex:1; padding:8px;">
+      <option value="persona">Por Paciente</option>
+      <option value="diagnostico">Por Diagnóstico</option>
+      <option value="sintoma">Por Síntoma</option>
+    </select>
+    <input type="text" name="query" placeholder="Ej: lulu / Gripe / fiebre" style="flex:2; padding:8px;">
+    <button class="btn-primary">Buscar</button>
+  </form>
+</div>
+
+{% if results %}
+<div style="margin-top:20px; display:grid; gap:15px;">
+  {% for p,s,d in results %}
+  <div class="card">
+    <h4>{{ p }}</h4>
+    <p><strong>Síntomas:</strong> {{ s }}</p>
+    <p><strong>Diagnóstico:</strong> {{ d }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

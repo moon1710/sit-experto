@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block title %}Nuevo Paciente{% endblock %}
+{% block content %}
+<h2>Agregar nuevo paciente</h2>
+<div class="card" style="max-width:400px;">
+  <form method="post">
+    <label>Nombre</label><br>
+    <input type="text" name="name" style="width:100%; padding:8px; margin-bottom:10px;"><br>
+    <label>Síntomas (separados por coma)</label><br>
+    <input type="text" name="symptoms" style="width:100%; padding:8px; margin-bottom:15px;"><br>
+    <button class="btn-primary">Guardar</button>
+  </form>
+</div>
+{% endblock %}

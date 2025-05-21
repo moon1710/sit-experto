@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Búsqueda{% endblock %}
+{% block content %}
+<h3>Búsqueda de Diagnóstico</h3>
+<form method="post" class="row gy-3">
+  <div class="col-md-4">
+    <label class="form-label">Tipo de búsqueda</label>
+    <select name="search_type" class="form-select" required>
+      <option value="">Seleccione...</option>
+      <option value="persona">Persona</option>
+      <option value="diagnostico">Diagnóstico</option>
+      <option value="sintoma">Síntoma</option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">Término</label>
+    <input type="text" name="query" class="form-control" placeholder="Ej. lulu, Gripe, fiebre" required>
+  </div>
+  <div class="col-md-2 d-flex align-items-end">
+    <button class="btn btn-success w-100">Buscar</button>
+  </div>
+</form>
+{% endblock %}

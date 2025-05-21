@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Roboto:wght@300;500&display=swap');
+
+:root {
+  --bg: #F8F9FA;
+  --card: #FFFFFF;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --accent: #5A4AE3;
+  --accent-hover: #3F37C9;
+  --text-primary: #2E2E2E;
+  --text-secondary: #6C6C6C;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+}
+
+.navbar {
+  height: 60px;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.navbar h1 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #FFF;
+}
+
+.sidebar {
+  position: fixed;
+  top: 60px; left: 0; bottom: 0;
+  width: 72px;
+  background: var(--accent-hover);
+  transition: width .3s;
+}
+
+.sidebar:hover { width: 200px; }
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  color: #FFF;
+  text-decoration: none;
+  transition: background .3s;
+}
+
+.sidebar a:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.sidebar a i {
+  font-size: 1.25rem;
+  width: 24px;
+  text-align: center;
+}
+
+.sidebar a span {
+  margin-left: 12px;
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.sidebar:hover a span {
+  opacity: 1;
+}
+
+.main {
+  margin-left: 72px;
+  padding: 24px;
+  transition: margin-left .3s;
+}
+
+.sidebar:hover ~ .main {
+  margin-left: 200px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--shadow);
+  padding: 20px;
+  transition: transform .2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #FFF;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}

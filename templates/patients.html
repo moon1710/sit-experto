@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+{% block title %}Pacientes{% endblock %}
+{% block content %}
+<h2>Pacientes registrados</h2>
+<div style="display:flex; flex-wrap:wrap; gap:20px;">
+  {% for name, syms in patients.items() %}
+  <div class="card" style="width:200px;">
+    <h4>{{ name.capitalize() }}</h4>
+    <p>Síntomas: {{ syms | join(', ') }}</p>
+    <p>Diagnóstico: {{ diagnosticar(name) }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

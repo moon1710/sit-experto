@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Consultorio Médico{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="navbar">
+    <h1>Consultorio Médico</h1>
+    <div style="margin-left:auto;">
+      {% if session.username %}
+      <span>👨‍⚕️ {{ session.username }}</span>
+      <a href="{{ url_for('logout') }}" style="color:white; margin-left:20px;">Salir</a>
+      {% endif %}
+    </div>
+  </header>
+  <nav class="sidebar">
+    <a href="{{ url_for('patients_view') }}" title="Pacientes">🧑‍🤝‍🧑</a>
+    <a href="{{ url_for('add_patient') }}" title="Nuevo">➕</a>
+    <a href="{{ url_for('diagnosis') }}" title="Diagnóstico">🔍</a>
+  </nav>
+  <main class="main">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat,msg in messages %}
+        <div class="card" style="background:#fdecea; color:#611a15;">{{ msg }}</div>
+      {% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

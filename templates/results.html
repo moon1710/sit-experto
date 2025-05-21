@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Resultados{% endblock %}
+{% block content %}
+<h3>Resultados para "{{ query }}" ({{ search_type }})</h3>
+{% if results %}
+  <table class="table table-striped mt-3">
+    <thead>
+      <tr>
+        <th>Persona</th>
+        {% if search_type == 'persona' %}<th>Síntomas</th><th>Diagnóstico</th>
+        {% elif search_type == 'diagnostico' %}<th>Síntomas</th>
+        {% elif search_type == 'sintoma' %}<th>Diagnóstico</th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in results %}
+      <tr>
+        <td>{{ r.persona }}</td>
+        {% if search_type == 'persona' %}
+          <td>{{ r.sintomas }}</td><td>{{ r.diagnostico }}</td>
+        {% elif search_type == 'diagnostico' %}
+          <td>{{ r.sintomas }}</td>
+        {% elif search_type == 'sintoma' %}
+          <td>{{ r.diagnostico }}</td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="mt-3">No se encontraron resultados.</p>
+{% endif %}
+<a href="{{ url_for('search') }}" class="btn btn-secondary mt-3">← Nueva búsqueda</a>
+{% endblock %}
