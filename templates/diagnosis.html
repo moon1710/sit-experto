@@ -1,28 +1,289 @@
 {% extends 'layout.html' %}
-{% block title %}Diagnóstico{% endblock %}
+{% block title %}Diagnóstico - MediCare{% endblock %}
 {% block content %}
-<h2>Consultar diagnóstico</h2>
-<div class="card" style="max-width:500px;">
-  <form method="post" style="display:flex; gap:10px; align-items:center;">
-    <select name="type" style="flex:1; padding:8px;">
-      <option value="persona">Por Paciente</option>
-      <option value="diagnostico">Por Diagnóstico</option>
-      <option value="sintoma">Por Síntoma</option>
-    </select>
-    <input type="text" name="query" placeholder="Ej: lulu / Gripe / fiebre" style="flex:2; padding:8px;">
-    <button class="btn-primary">Buscar</button>
+<!-- Header Section -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Centro de Diagnóstico</h1>
+      <p class="text-gray-600">Busca y consulta diagnósticos por paciente, síntoma o condición</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <div class="bg-white/70 backdrop-blur-sm rounded-xl px-4 py-2 border border-gray-200/50">
+        <span class="text-sm text-gray-600">Total consultas: </span>
+        <span class="font-semibold text-blue-600">{{ patients|length }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search Section -->
+<div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 mb-8">
+  <!-- Search Header -->
+  <div class="bg-gradient-to-r from-purple-50 to-blue-50 p-6 border-b border-gray-100 rounded-t-2xl">
+    <div class="flex items-center space-x-3">
+      <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
+        <i class="fas fa-search text-white text-xl"></i>
+      </div>
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900">Búsqueda Inteligente</h2>
+        <p class="text-sm text-gray-600">Encuentra información médica de forma rápida y precisa</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Form -->
+  <form method="post" class="p-6" id="searchForm">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Search Type Selection -->
+      <div class="lg:col-span-1">
+        <label class="block text-sm font-medium text-gray-700 mb-3">
+          <i class="fas fa-filter text-purple-500 mr-2"></i>
+          Tipo de Búsqueda
+        </label>
+        <div class="space-y-3">
+          <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-purple-50 hover:border-purple-300 cursor-pointer transition-colors">
+            <input type="radio" name="search_type" value="persona" class="text-purple-600 focus:ring-purple-500" onchange="updateOptions()">
+            <div class="ml-3 flex items-center space-x-2">
+              <i class="fas fa-user text-purple-500"></i>
+              <span class="font-medium text-gray-700">Por Paciente</span>
+            </div>
+          </label>
+          <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-blue-50 hover:border-blue-300 cursor-pointer transition-colors">
+            <input type="radio" name="search_type" value="diagnostico" class="text-blue-600 focus:ring-blue-500" onchange="updateOptions()">
+            <div class="ml-3 flex items-center space-x-2">
+              <i class="fas fa-diagnoses text-blue-500"></i>
+              <span class="font-medium text-gray-700">Por Diagnóstico</span>
+            </div>
+          </label>
+          <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-200 hover:bg-green-50 hover:border-green-300 cursor-pointer transition-colors">
+            <input type="radio" name="search_type" value="sintoma" class="text-green-600 focus:ring-green-500" onchange="updateOptions()">
+            <div class="ml-3 flex items-center space-x-2">
+              <i class="fas fa-thermometer-half text-green-500"></i>
+              <span class="font-medium text-gray-700">Por Síntoma</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Query Selection -->
+      <div class="lg:col-span-2 space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-search text-blue-500 mr-2"></i>
+            Seleccionar Criterio
+          </label>
+          <select id="querySelect" name="query" required
+                  class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                  disabled>
+            <option value="">Selecciona primero el tipo de búsqueda</option>
+          </select>
+          <p class="text-xs text-gray-500 mt-1">El criterio de búsqueda se actualizará según el tipo seleccionado</p>
+        </div>
+
+        <!-- Search Button -->
+        <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-blue-600 hover:from-purple-600 hover:to-blue-700 text-white py-3 px-6 rounded-xl transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
+          <i class="fas fa-search"></i>
+          <span>Buscar Diagnóstico</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Search Options -->
+    <div class="border-t border-gray-100 pt-6">
+      <label class="block text-sm font-medium text-gray-700 mb-3">
+        <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+        Búsqueda Rápida
+      </label>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
+        <button type="button" onclick="quickSearch('persona', 'juan')" class="quick-search-btn">
+          <i class="fas fa-user-injured mr-1"></i>Pacientes Activos
+        </button>
+        <button type="button" onclick="quickSearch('sintoma', 'fiebre')" class="quick-search-btn">
+          <i class="fas fa-thermometer-three-quarters mr-1"></i>Fiebre
+        </button>
+        <button type="button" onclick="quickSearch('sintoma', 'tos')" class="quick-search-btn">
+          <i class="fas fa-lungs mr-1"></i>Tos
+        </button>
+        <button type="button" onclick="quickSearch('diagnostico', 'gripe')" class="quick-search-btn">
+          <i class="fas fa-virus mr-1"></i>Gripe
+        </button>
+        <button type="button" onclick="quickSearch('sintoma', 'dolor')" class="quick-search-btn">
+          <i class="fas fa-head-side-cough mr-1"></i>Dolor
+        </button>
+        <button type="button" onclick="showAllPatients()" class="quick-search-btn">
+          <i class="fas fa-list mr-1"></i>Ver Todos
+        </button>
+      </div>
+    </div>
   </form>
 </div>
 
+<!-- Results Section -->
 {% if results %}
-<div style="margin-top:20px; display:grid; gap:15px;">
-  {% for p,s,d in results %}
-  <div class="card">
-    <h4>{{ p }}</h4>
-    <p><strong>Síntomas:</strong> {{ s }}</p>
-    <p><strong>Diagnóstico:</strong> {{ d }}</p>
+<div class="space-y-6">
+  <!-- Results Header -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+        <i class="fas fa-check text-green-600"></i>
+      </div>
+      <div>
+        <h3 class="text-xl font-semibold text-gray-900">Resultados Encontrados</h3>
+        <p class="text-sm text-gray-600">{{ results|length }} resultado(s) para tu búsqueda</p>
+      </div>
+    </div>
+    <button onclick="exportResults()" class="flex items-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl transition-colors">
+      <i class="fas fa-download"></i>
+      <span>Exportar</span>
+    </button>
   </div>
-  {% endfor %}
+
+  <!-- Results Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    {% for p, syms, diag in results %}
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-200/50 overflow-hidden hover:shadow-xl transition-all duration-300">
+      <!-- Patient Header -->
+      <div class="bg-gradient-to-r from-blue-50 to-green-50 p-6 border-b border-gray-100">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+              <span class="text-white font-bold text-lg">{{ p[0].upper() }}</span>
+            </div>
+            <div>
+              <h4 class="text-lg font-semibold text-gray-900">{{ p.title() }}</h4>
+              <p class="text-sm text-gray-500">Paciente ID: PAT-{{ loop.index0 + 1000 }}</p>
+            </div>
+          </div>
+          <div class="flex space-x-2">
+            <button class="w-8 h-8 bg-blue-100 hover:bg-blue-200 rounded-lg flex items-center justify-center transition-colors">
+              <i class="fas fa-eye text-blue-600 text-sm"></i>
+            </button>
+            <button class="w-8 h-8 bg-green-100 hover:bg-green-200 rounded-lg flex items-center justify-center transition-colors">
+              <i class="fas fa-print text-green-600 text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patient Details -->
+      <div class="p-6 space-y-4">
+        <!-- Symptoms -->
+        <div>
+          <h5 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+            <i class="fas fa-thermometer-half text-red-500 mr-2"></i>
+            Síntomas Reportados
+          </h5>
+          <div class="flex flex-wrap gap-2">
+            {% for symptom in syms %}
+            <span class="inline-flex items-center px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
+              <i class="fas fa-circle text-red-400 text-xs mr-1"></i>
+              {{ symptom.replace('_', ' ').title() }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Diagnosis -->
+        <div>
+          <h5 class="text-sm font-medium text-gray-700 mb-2 flex items-center">
+            <i class="fas fa-stethoscope text-blue-500 mr-2"></i>
+            Diagnóstico Médico
+          </h5>
+          <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200">
+            <p class="text-blue-900 font-semibold text-lg">{{ diag }}</p>
+            <div class="flex items-center mt-2 text-sm text-blue-700">
+              <i class="fas fa-calendar text-blue-500 mr-1"></i>
+              <span>Última actualización: Hoy</span>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endfor %}
+</div>
 </div>
 {% endif %}
-{% endblock %}
+
+<!-- Scripts dinámicos -->
+<script>
+    // Listas inyectadas desde Flask
+    let diagnoses = {{ diagnoses | tojson }};
+    let symptoms = {{ symptoms | tojson }};
+    let patientsList = {{ patients.keys() | list | tojson }};
+  
+    function updateOptions() {
+      const select = document.getElementById('querySelect');
+      const selected = document.querySelector('input[name="search_type"]:checked');
+  
+      if (!selected) {
+        select.disabled = true;
+        select.innerHTML = '<option value="">Selecciona primero el tipo de búsqueda</option>';
+        return;
+      }
+  
+      const type = selected.value;
+      let options = [];
+  
+      if (type === 'persona') options = patientsList;
+      else if (type === 'diagnostico') options = diagnoses;
+      else if (type === 'sintoma') options = symptoms;
+  
+      select.disabled = false;
+      select.innerHTML = '<option value="">Selecciona una opción</option>';
+  
+      for (let opt of options) {
+        const option = document.createElement('option');
+        option.value = opt;
+        option.textContent = opt.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        select.appendChild(option);
+      }
+    }
+  
+    function quickSearch(type, value) {
+      const radio = document.querySelector(`input[name="search_type"][value="${type}"]`);
+      radio.checked = true;
+      updateOptions();
+  
+      // Esperar a que se actualicen las opciones del select
+      setTimeout(() => {
+        const select = document.getElementById('querySelect');
+        select.value = value;
+        document.getElementById('searchForm').submit();
+      }, 200);
+    }
+  
+    function showAllPatients() {
+      const select = document.getElementById('querySelect');
+      const radio = document.querySelector(`input[name="search_type"][value="persona"]`);
+      radio.checked = true;
+      updateOptions();
+  
+      setTimeout(() => {
+        const form = document.getElementById('searchForm');
+        // Ejecutamos búsqueda por cada paciente
+        // pero como el backend no reconoce "todos", usamos el primer paciente y que lo vea todo allá
+        const select = document.getElementById('querySelect');
+        select.value = patientsList[0]; // evitar enviar vacío
+        form.submit();
+      }, 200);
+    }
+  
+    function validateSearch() {
+      const selectedType = document.querySelector('input[name="search_type"]:checked');
+      const queryValue = document.getElementById('querySelect').value;
+  
+      if (!selectedType || !queryValue) {
+        alert('Por favor, selecciona un tipo de búsqueda y un criterio.');
+        return false;
+      }
+      return true;
+    }
+  
+    function exportResults() {
+      alert("Funcionalidad de exportar aún no implementada.");
+    }
+  </script>
+  
+  {% endblock %}

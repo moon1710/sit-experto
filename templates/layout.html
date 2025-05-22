@@ -4,30 +4,127 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Consultorio Médico{% endblock %}</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e'
+            },
+            medical: {
+              pink: '#f3e8ff',
+              blue: '#dbeafe',
+              green: '#dcfce7',
+              yellow: '#fef3c7'
+            }
+          }
+        }
+      }
+    }
+  </script>
 </head>
-<body>
-  <header class="navbar">
-    <h1>Consultorio Médico</h1>
-    <div style="margin-left:auto;">
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 font-inter text-gray-800 min-h-screen">
+  <!-- Header -->
+  <header class="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
+    <div class="flex items-center justify-between px-6 py-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+          <i class="fas fa-heartbeat text-white text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-gray-900">MediCare</h1>
+          <p class="text-sm text-gray-500">Sistema de Gestión Médica</p>
+        </div>
+      </div>
+      
       {% if session.username %}
-      <span>👨‍⚕️ {{ session.username }}</span>
-      <a href="{{ url_for('logout') }}" style="color:white; margin-left:20px;">Salir</a>
+      <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-3 bg-gray-50 rounded-full px-4 py-2">
+          <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+            <i class="fas fa-user-md text-white text-sm"></i>
+          </div>
+          <span class="text-sm font-medium text-gray-700">Dr. {{ session.username }}</span>
+        </div>
+        <button onclick="logout()" class="flex items-center space-x-2 text-red-500 hover:bg-red-50 px-3 py-2 rounded-lg transition-colors">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text-sm">Salir</span>
+        </button>
+      </div>
       {% endif %}
     </div>
   </header>
-  <nav class="sidebar">
-    <a href="{{ url_for('patients_view') }}" title="Pacientes">🧑‍🤝‍🧑</a>
-    <a href="{{ url_for('add_patient') }}" title="Nuevo">➕</a>
-    <a href="{{ url_for('diagnosis') }}" title="Diagnóstico">🔍</a>
-  </nav>
-  <main class="main">
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% for cat,msg in messages %}
-        <div class="card" style="background:#fdecea; color:#611a15;">{{ msg }}</div>
-      {% endfor %}
-    {% endwith %}
-    {% block content %}{% endblock %}
-  </main>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-20 hover:w-64 bg-white/90 backdrop-blur-sm border-r border-gray-200/50 transition-all duration-300 overflow-hidden">
+      <nav class="pt-8 px-4">
+        <ul class="space-y-3">
+          <li>
+            <a href="{{ url_for('patients_view') }}" class="group flex items-center px-3 py-3 rounded-xl hover:bg-blue-50 transition-all duration-200">
+              <div class="w-10 h-10 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-users text-white"></i>
+              </div>
+              <span class="ml-4 font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">Pacientes</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('add_patient') }}" class="group flex items-center px-3 py-3 rounded-xl hover:bg-green-50 transition-all duration-200">
+              <div class="w-10 h-10 bg-gradient-to-r from-green-400 to-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-user-plus text-white"></i>
+              </div>
+              <span class="ml-4 font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">Nuevo Paciente</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url_for('diagnosis') }}" class="group flex items-center px-3 py-3 rounded-xl hover:bg-purple-50 transition-all duration-200">
+              <div class="w-10 h-10 bg-gradient-to-r from-purple-400 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-stethoscope text-white"></i>
+              </div>
+              <span class="ml-4 font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">Diagnóstico</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="group flex items-center px-3 py-3 rounded-xl hover:bg-yellow-50 transition-all duration-200">
+              <div class="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                <i class="fas fa-chart-line text-white"></i>
+              </div>
+              <span class="ml-4 font-medium text-gray-700 opacity-0 group-hover:opacity-100 transition-opacity">Estadísticas</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, msg in messages %}
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 flex items-center space-x-3">
+          <i class="fas fa-exclamation-circle text-red-500"></i>
+          <span>{{ msg }}</span>
+        </div>
+        {% endfor %}
+      {% endwith %}
+      
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script>
+    function logout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+  </script>
 </body>
 </html>

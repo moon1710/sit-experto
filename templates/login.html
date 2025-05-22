@@ -1,20 +1,127 @@
 {% extends "layout.html" %}
-{% block title %}Iniciar Sesión{% endblock %}
+{% block title %}Iniciar Sesión - MediCare{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-4">
-    <h3>Iniciar Sesión</h3>
-    <form method="post">
-      <div class="mb-3">
-        <label class="form-label">Usuario</label>
-        <input type="text" name="username" class="form-control" required>
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <!-- Header -->
+    <div class="text-center">
+      <div class="mx-auto w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6">
+        <i class="fas fa-user-md text-white text-2xl"></i>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Contraseña</label>
-        <input type="password" name="password" class="form-control" required>
+      <h2 class="text-3xl font-bold text-gray-900 mb-2">Bienvenido de vuelta</h2>
+      <p class="text-gray-600">Inicia sesión en tu cuenta médica</p>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 p-8">
+      <form method="post" class="space-y-6">
+        <!-- Usuario Field -->
+        <div class="group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-user text-blue-500 mr-2"></i>
+            Usuario
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              name="username" 
+              required
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+              placeholder="Ingresa tu usuario"
+            >
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-lock text-blue-500 mr-2"></i>
+            Contraseña
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              name="password" 
+              required
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+              placeholder="Ingresa tu contraseña"
+            >
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <i class="fas fa-eye text-gray-400 cursor-pointer hover:text-gray-600" onclick="togglePassword()"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remember Me -->
+        <div class="flex items-center justify-between">
+          <div class="flex items-center">
+            <input 
+              id="remember-me" 
+              name="remember-me" 
+              type="checkbox" 
+              class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+            >
+            <label for="remember-me" class="ml-2 block text-sm text-gray-700">
+              Recordarme
+            </label>
+          </div>
+          <div class="text-sm">
+            <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit"
+          class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105"
+        >
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <i class="fas fa-sign-in-alt text-blue-200 group-hover:text-white"></i>
+          </span>
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <!-- Footer -->
+      <div class="mt-6 text-center">
+        <p class="text-sm text-gray-600">
+          ¿No tienes cuenta? 
+          <a href="#" class="font-medium text-blue-600 hover:text-blue-500 transition-colors">
+            Contacta al administrador
+          </a>
+        </p>
       </div>
-      <button class="btn btn-primary w-100">Ingresar</button>
-    </form>
+    </div>
+
+    <!-- Security Info -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center space-x-3">
+      <i class="fas fa-shield-alt text-blue-500"></i>
+      <p class="text-sm text-blue-800">
+        Tu información está protegida con encriptación de nivel médico
+      </p>
+    </div>
   </div>
 </div>
+
+<script>
+  function togglePassword() {
+    const passwordInput = document.querySelector('input[name="password"]');
+    const eyeIcon = document.querySelector('.fa-eye');
+    
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      eyeIcon.classList.remove('fa-eye');
+      eyeIcon.classList.add('fa-eye-slash');
+    } else {
+      passwordInput.type = 'password';
+      eyeIcon.classList.remove('fa-eye-slash');
+      eyeIcon.classList.add('fa-eye');
+    }
+  }
+</script>
 {% endblock %}

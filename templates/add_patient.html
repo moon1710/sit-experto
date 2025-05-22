@@ -1,14 +1,345 @@
 {% extends 'layout.html' %}
-{% block title %}Nuevo Paciente{% endblock %}
+{% block title %}Nuevo Paciente - MediCare{% endblock %}
 {% block content %}
-<h2>Agregar nuevo paciente</h2>
-<div class="card" style="max-width:400px;">
-  <form method="post">
-    <label>Nombre</label><br>
-    <input type="text" name="name" style="width:100%; padding:8px; margin-bottom:10px;"><br>
-    <label>Síntomas (separados por coma)</label><br>
-    <input type="text" name="symptoms" style="width:100%; padding:8px; margin-bottom:15px;"><br>
-    <button class="btn-primary">Guardar</button>
-  </form>
+<!-- Header Section -->
+<div class="mb-8">
+  <div class="flex items-center space-x-3 mb-4">
+    <button onclick="history.back()" class="w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center transition-colors">
+      <i class="fas fa-arrow-left text-gray-600"></i>
+    </button>
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900">Nuevo Paciente</h1>
+      <p class="text-gray-600">Registra un nuevo paciente en el sistema</p>
+    </div>
+  </div>
 </div>
+
+<div class="max-w-2xl mx-auto">
+  <!-- Progress Indicator -->
+  <div class="mb-8">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-medium">1</div>
+        <span class="text-sm font-medium text-blue-600">Información Básica</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">2</div>
+        <span class="text-sm text-gray-500">Síntomas</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-gray-200 text-gray-500 rounded-full flex items-center justify-center text-sm font-medium">3</div>
+        <span class="text-sm text-gray-500">Confirmar</span>
+      </div>
+    </div>
+    <div class="w-full bg-gray-200 rounded-full h-2">
+      <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-300" style="width: 33%"></div>
+    </div>
+  </div>
+
+  <!-- Main Form Card -->
+  <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+    <!-- Card Header -->
+    <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-b border-gray-100">
+      <div class="flex items-center space-x-3">
+        <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center">
+          <i class="fas fa-user-plus text-white text-xl"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-semibold text-gray-900">Registrar Nuevo Paciente</h2>
+          <p class="text-sm text-gray-600">Complete la información del paciente</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <form method="post" class="p-8 space-y-6" id="patientForm">
+      <!-- Personal Information Section -->
+      <div class="space-y-6">
+        <div class="flex items-center space-x-2 mb-4">
+          <i class="fas fa-user text-blue-500"></i>
+          <h3 class="text-lg font-medium text-gray-900">Información Personal</h3>
+        </div>
+
+        <!-- Name Field -->
+        <div class="group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-id-card text-blue-500 mr-2"></i>
+            Nombre Completo *
+          </label>
+          <div class="relative">
+            <input 
+              type="text" 
+              name="name" 
+              id="patientName"
+              required
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+              placeholder="Ingrese el nombre completo del paciente"
+              oninput="validateName()"
+            >
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+              <i class="fas fa-user text-gray-400"></i>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Ejemplo: Juan Pérez García</p>
+        </div>
+
+        <!-- Additional Info Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-calendar text-blue-500 mr-2"></i>
+              Edad (opcional)
+            </label>
+            <input 
+              type="number" 
+              name="age" 
+              min="0" 
+              max="120"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400"
+              placeholder="Edad"
+            >
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              <i class="fas fa-venus-mars text-blue-500 mr-2"></i>
+              Género (opcional)
+            </label>
+            <select class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
+              <option value="">Seleccionar...</option>
+              <option value="M">Masculino</option>
+              <option value="F">Femenino</option>
+              <option value="O">Otro</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Symptoms Section -->
+      <div class="space-y-6 pt-6 border-t border-gray-100">
+        <div class="flex items-center space-x-2 mb-4">
+          <i class="fas fa-thermometer-half text-red-500"></i>
+          <h3 class="text-lg font-medium text-gray-900">Síntomas Presentados</h3>
+        </div>
+
+        <!-- Symptoms Input -->
+        <div class="group">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-stethoscope text-red-500 mr-2"></i>
+            Síntomas *
+          </label>
+          <div class="relative">
+            <textarea 
+              name="symptoms" 
+              id="symptomsInput"
+              required
+              rows="4"
+              class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 placeholder-gray-400 resize-none"
+              placeholder="Describa los síntomas separados por comas&#10;Ejemplo: fiebre, dolor de cabeza, náuseas, fatiga"
+              oninput="processSy‌mptoms()"
+            ></textarea>
+            <div class="absolute top-3 right-3">
+              <i class="fas fa-notes-medical text-gray-400"></i>
+            </div>
+          </div>
+          <p class="text-xs text-gray-500 mt-1">Separe cada síntoma con una coma. Sea específico y detallado.</p>
+        </div>
+
+        <!-- Symptoms Preview -->
+        <div id="symptomsPreview" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-eye text-blue-500 mr-2"></i>
+            Vista Previa de Síntomas
+          </label>
+          <div id="symptomsContainer" class="flex flex-wrap gap-2 p-4 bg-red-50 rounded-xl border border-red-200">
+            <!-- Symptoms will be added here dynamically -->
+          </div>
+        </div>
+
+        <!-- Quick Symptoms -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">
+            <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+            Síntomas Comunes (Click para agregar)
+          </label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+            <button type="button" onclick="addQuickSymptom('fiebre')" class="quick-symptom-btn">
+              <i class="fas fa-thermometer-three-quarters mr-1"></i>Fiebre
+            </button>
+            <button type="button" onclick="addQuickSymptom('dolor de cabeza')" class="quick-symptom-btn">
+              <i class="fas fa-head-side-cough mr-1"></i>Dolor de cabeza
+            </button>
+            <button type="button" onclick="addQuickSymptom('tos')" class="quick-symptom-btn">
+              <i class="fas fa-lungs mr-1"></i>Tos
+            </button>
+            <button type="button" onclick="addQuickSymptom('náuseas')" class="quick-symptom-btn">
+              <i class="fas fa-dizzy mr-1"></i>Náuseas
+            </button>
+            <button type="button" onclick="addQuickSymptom('fatiga')" class="quick-symptom-btn">
+              <i class="fas fa-bed mr-1"></i>Fatiga
+            </button>
+            <button type="button" onclick="addQuickSymptom('dolor muscular')" class="quick-symptom-btn">
+              <i class="fas fa-dumbbell mr-1"></i>Dolor muscular
+            </button>
+            <button type="button" onclick="addQuickSymptom('dolor de garganta')" class="quick-symptom-btn">
+              <i class="fas fa-head-side-virus mr-1"></i>Dolor garganta
+            </button>
+            <button type="button" onclick="addQuickSymptom('mareos')" class="quick-symptom-btn">
+              <i class="fas fa-dizzy mr-1"></i>Mareos
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+        <button type="button" onclick="history.back()" class="flex items-center space-x-2 text-gray-600 hover:text-gray-800 transition-colors">
+          <i class="fas fa-arrow-left"></i>
+          <span>Cancelar</span>
+        </button>
+        
+        <div class="flex space-x-3">
+          <button type="button" onclick="saveDraft()" class="flex items-center space-x-2 bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-xl transition-colors">
+            <i class="fas fa-save"></i>
+            <span>Guardar Borrador</span>
+          </button>
+          <button type="submit" class="flex items-center space-x-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-6 py-3 rounded-xl transition-all transform hover:scale-105">
+            <i class="fas fa-user-plus"></i>
+            <span>Registrar Paciente</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Help Card -->
+  <div class="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
+    <div class="flex items-start space-x-3">
+      <i class="fas fa-info-circle text-blue-500 mt-1"></i>
+      <div>
+        <h4 class="font-medium text-blue-900 mb-1">Consejos para el registro</h4>
+        <ul class="text-sm text-blue-800 space-y-1">
+          <li>• Use nombres completos para evitar confusiones</li>
+          <li>• Sea específico con los síntomas (intensidad, duración, etc.)</li>
+          <li>• Puede usar los botones de síntomas comunes para agilizar el proceso</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+.quick-symptom-btn {
+  @apply bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors;
+}
+.quick-symptom-btn.active {
+  @apply bg-blue-500 text-white border-blue-500;
+}
+</style>
+
+<script>
+let symptomsArray = [];
+
+function validateName() {
+  const nameInput = document.getElementById('patientName');
+  const name = nameInput.value.trim();
+  
+  if (name.length < 2) {
+    nameInput.classList.add('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+    nameInput.classList.remove('border-gray-300', 'focus:border-blue-500', 'focus:ring-blue-500');
+  } else {
+    nameInput.classList.remove('border-red-300', 'focus:border-red-500', 'focus:ring-red-500');
+    nameInput.classList.add('border-gray-300', 'focus:border-blue-500', 'focus:ring-blue-500');
+  }
+}
+
+function processSymptoms() {
+  const input = document.getElementById('symptomsInput');
+  const symptoms = input.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+  
+  symptomsArray = symptoms;
+  updateSymptomsPreview();
+}
+
+function updateSymptomsPreview() {
+  const preview = document.getElementById('symptomsPreview');
+  const container = document.getElementById('symptomsContainer');
+  
+  if (symptomsArray.length > 0) {
+    preview.classList.remove('hidden');
+    container.innerHTML = symptomsArray.map((symptom, index) => `
+      <span class="inline-flex items-center space-x-1 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm">
+        <span>${symptom}</span>
+        <button type="button" onclick="removeSymptom(${index})" class="ml-1 text-red-600 hover:text-red-800">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </span>
+    `).join('');
+  } else {
+    preview.classList.add('hidden');
+  }
+}
+
+function removeSymptom(index) {
+  symptomsArray.splice(index, 1);
+  document.getElementById('symptomsInput').value = symptomsArray.join(', ');
+  updateSymptomsPreview();
+}
+
+function addQuickSymptom(symptom) {
+  const input = document.getElementById('symptomsInput');
+  const currentSymptoms = input.value.trim();
+  
+  if (!symptomsArray.includes(symptom)) {
+    if (currentSymptoms) {
+      input.value = currentSymptoms + ', ' + symptom;
+    } else {
+      input.value = symptom;
+    }
+    processSymptoms();
+    
+    // Visual feedback
+    event.target.classList.add('active');
+    setTimeout(() => {
+      event.target.classList.remove('active');
+    }, 300);
+  }
+}
+
+function saveDraft() {
+  const formData = new FormData(document.getElementById('patientForm'));
+  localStorage.setItem('patientDraft', JSON.stringify(Object.fromEntries(formData)));
+  
+  // Show notification
+  const notification = document.createElement('div');
+  notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+  notification.innerHTML = '<i class="fas fa-check mr-2"></i>Borrador guardado';
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+// Load draft if exists
+window.addEventListener('DOMContentLoaded', function() {
+  const draft = localStorage.getItem('patientDraft');
+  if (draft) {
+    const data = JSON.parse(draft);
+    Object.keys(data).forEach(key => {
+      const element = document.querySelector(`[name="${key}"]`);
+      if (element) {
+        element.value = data[key];
+        if (key === 'symptoms') {
+          processSymptoms();
+        }
+      }
+    });
+  }
+});
+
+// Clear draft on successful submit
+document.getElementById('patientForm').addEventListener('submit', function() {
+  localStorage.removeItem('patientDraft');
+});
+</script>
 {% endblock %}

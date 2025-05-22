@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from functools import wraps
 
 app = Flask(__name__)
@@ -16,14 +16,18 @@ patients = {
 
 def diagnosticar(persona):
     s = set(patients.get(persona, []))
-    if {"fiebre","dolor_muscular","dolor_de_cabeza"}.issubset(s): return "Gripe"
-    if {"estornudos","congestion_nasal","ojos_llorosos"}.issubset(s): return "Resfriado"
-    if {"fiebre","dolor_de_garganta","tos"}.issubset(s): return "Faringitis"
-    if {"dolor_de_cabeza","sensibilidad_a_la_luz"}.issubset(s): return "Migraña"
+    if {"fiebre", "dolor_muscular", "dolor_de_cabeza"}.issubset(s):
+        return "Gripe"
+    if {"estornudos", "congestion_nasal", "ojos_llorosos"}.issubset(s):
+        return "Resfriado"
+    if {"fiebre", "dolor_de_garganta", "tos"}.issubset(s):
+        return "Faringitis"
+    if {"dolor_de_cabeza", "sensibilidad_a_la_luz"}.issubset(s):
+        return "Migraña"
     return "Sin diagnóstico claro"
 
 # Usuarios de ejemplo para login
-users = {"admin": "pass123", "doctor": "medico456"}
+auth_users = {"admin": "pass123", "doctor": "medico456"}
 
 # Decorador de autenticación
 def login_required(f):
@@ -35,12 +39,12 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         u = request.form['username']
         p = request.form['password']
-        if users.get(u) == p:
+        if auth_users.get(u) == p:
             session['username'] = u
             return redirect(url_for('patients_view'))
         flash('Usuario o contraseña incorrectos', 'danger')
@@ -62,7 +66,7 @@ def home():
 def patients_view():
     return render_template('patients.html', patients=patients, diagnosticar=diagnosticar)
 
-@app.route('/patients/new', methods=['GET','POST'])
+@app.route('/patients/new', methods=['GET', 'POST'])
 @login_required
 def add_patient():
     if request.method == 'POST':
@@ -75,24 +79,32 @@ def add_patient():
         flash('Todos los campos son obligatorios', 'warning')
     return render_template('add_patient.html')
 
-@app.route('/diagnosis', methods=['GET','POST'])
+@app.route('/diagnosis', methods=['GET', 'POST'])
 @login_required
 def diagnosis():
     results = []
+    # Datos para dropdowns dinámicos
+    diagnoses_set = sorted({diagnosticar(p) for p in patients})
+    symptoms_set = sorted({s for syms in patients.values() for s in syms})
+
     if request.method == 'POST':
-        st = request.form['type']
+        st = request.form['search_type']
         q = request.form['query'].lower().replace(' ', '_')
         if st == 'persona' and q in patients:
-            results = [(q.capitalize(), ', '.join(patients[q]), diagnosticar(q))]
+            results = [(q.capitalize(), [patients[q]], diagnosticar(q))]
         elif st == 'diagnostico':
             for p in patients:
                 if diagnosticar(p).lower() == q:
-                    results.append((p.capitalize(), ', '.join(patients[p]), diagnosticar(p)))
+                    results.append((p.capitalize(), patients[p], diagnosticar(p)))
         elif st == 'sintoma':
             for p, syms in patients.items():
                 if q in syms:
-                    results.append((p.capitalize(), ', '.join(syms), diagnosticar(p)))
-    return render_template('diagnosis.html', results=results)
+                    results.append((p.capitalize(), patients[p], diagnosticar(p)))
+
+    return render_template(
+        'diagnosis.html', results=results,
+        patients=patients, diagnoses=diagnoses_set, symptoms=symptoms_set
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)
