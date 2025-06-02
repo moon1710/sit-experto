@@ -1,0 +1,550 @@
+{% extends 'layout.html' %}
+{% block title %}Portal de Consultas - MediCare{% endblock %}
+{% block content %}
+<!-- Header Section -->
+<div class="mb-8">
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Portal de Consultas</h1>
+      <p class="text-gray-600">Describe tus síntomas y obtén recomendaciones médicas</p>
+    </div>
+    <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-xl">
+      <i class="fas fa-info-circle text-blue-500"></i>
+      <span class="text-sm text-blue-700">Consulta preliminar - No reemplaza visita médica</span>
+    </div>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <!-- Input Form -->
+  <div class="lg:col-span-2">
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-user-injured text-white text-xl"></i>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-gray-900">Consulta Virtual</h2>
+            <p class="text-sm text-gray-600">Especialistas recomendados en tu área</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <!-- Symptoms Intro -->
+        <div class="mb-6">
+          <h3 class="text-lg font-semibold text-gray-900 mb-2">
+            <i class="fas fa-notes-medical text-red-500 mr-2"></i>
+            Describe tus síntomas para obtener una evaluación preliminar
+          </h3>
+          <p class="text-gray-600 text-sm">Sé claro y preciso para mejores resultados</p>
+        </div>
+
+        <form method="post" class="space-y-6">
+          <!-- Symptoms Input -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+              <i class="fas fa-thermometer-half text-red-500 mr-2"></i>
+              ¿Qué síntomas presentas? *
+            </label>
+            <div class="relative">
+              <textarea 
+                name="symptoms" 
+                id="symptomsInput"
+                required
+                rows="4"
+                class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 placeholder-gray-400 resize-none"
+                placeholder="Describe tus síntomas separados por comas&#10;Ejemplo: fiebre, dolor de cabeza, náuseas, fatiga"
+              >{{ request.form.get('symptoms', '') }}</textarea>
+              <div class="absolute top-3 right-3">
+                <i class="fas fa-notes-medical text-gray-400"></i>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Sé específico: intensidad, duración, ubicación del dolor, etc.</p>
+          </div>
+
+          <!-- Quick Symptoms -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-3">
+              <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+              Síntomas Comunes (Click para agregar)
+            </label>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+              <button type="button" onclick="addSymptom('fiebre')" class="symptom-btn">
+                <i class="fas fa-thermometer-three-quarters mr-1"></i>Fiebre
+              </button>
+              <button type="button" onclick="addSymptom('dolor de cabeza')" class="symptom-btn">
+                <i class="fas fa-head-side-cough mr-1"></i>Dolor de cabeza
+              </button>
+              <button type="button" onclick="addSymptom('tos')" class="symptom-btn">
+                <i class="fas fa-lungs mr-1"></i>Tos
+              </button>
+              <button type="button" onclick="addSymptom('náuseas')" class="symptom-btn">
+                <i class="fas fa-dizzy mr-1"></i>Náuseas
+              </button>
+              <button type="button" onclick="addSymptom('fatiga')" class="symptom-btn">
+                <i class="fas fa-bed mr-1"></i>Fatiga
+              </button>
+              <button type="button" onclick="addSymptom('dolor muscular')" class="symptom-btn">
+                <i class="fas fa-dumbbell mr-1"></i>Dolor muscular
+              </button>
+              <button type="button" onclick="addSymptom('dolor de garganta')" class="symptom-btn">
+                <i class="fas fa-head-side-virus mr-1"></i>Dolor garganta
+              </button>
+              <button type="button" onclick="addSymptom('estornudos')" class="symptom-btn">
+                <i class="fas fa-head-side-cough-slash mr-1"></i>Estornudos
+              </button>
+              <button type="button" onclick="addSymptom('congestión nasal')" class="symptom-btn">
+                <i class="fas fa-nose mr-1"></i>Congestión
+              </button>
+              <button type="button" onclick="addSymptom('sensibilidad a la luz')" class="symptom-btn">
+                <i class="fas fa-eye mr-1"></i>Fotofobia
+              </button>
+              <button type="button" onclick="addSymptom('mareos')" class="symptom-btn">
+                <i class="fas fa-dizzy mr-1"></i>Mareos
+              </button>
+              <button type="button" onclick="addSymptom('ojos llorosos')" class="symptom-btn">
+                <i class="fas fa-eye-dropper mr-1"></i>Ojos llorosos
+              </button>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="flex justify-end">
+            <button type="submit" class="flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 py-3 rounded-xl transition-all transform hover:scale-105">
+              <i class="fas fa-search"></i>
+              <span>Obtener Diagnóstico</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Access Panel -->
+  <div class="space-y-6">
+    <!-- Emergency Contact -->
+    <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-2xl p-6 text-white">
+      <div class="flex items-center space-x-3 mb-4">
+        <i class="fas fa-exclamation-triangle text-2xl"></i>
+        <h3 class="text-lg font-semibold">Emergencia</h3>
+      </div>
+      <p class="text-red-100 text-sm mb-4">Si tienes una emergencia médica, contacta inmediatamente:</p>
+      <div class="space-y-2">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-phone"></i>
+          <span class="font-medium">911</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-ambulance"></i>
+          <span class="text-sm">Cruz Roja: 271-712-3456</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Health Tips -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+        Consejos de Salud
+      </h3>
+      <ul class="space-y-2 text-sm text-gray-600">
+        <li class="flex items-start space-x-2">
+          <i class="fas fa-check text-green-500 mt-0.5"></i>
+          <span>Bebe al menos 8 vasos de agua al día</span>
+        </li>
+        <li class="flex items-start space-x-2">
+          <i class="fas fa-check text-green-500 mt-0.5"></i>
+          <span>Lávate las manos frecuentemente</span>
+        </li>
+        <li class="flex items-start space-x-2">
+          <i class="fas fa-check text-green-500 mt-0.5"></i>
+          <span>Mantén una dieta balanceada</span>
+        </li>
+        <li class="flex items-start space-x-2">
+          <i class="fas fa-check text-green-500 mt-0.5"></i>
+          <span>Duerme 7-8 horas diarias</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- Additional Resources -->
+<div class="mt-12">
+  <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+    <i class="fas fa-book-medical text-blue-500 mr-3"></i>
+    Recursos Adicionales
+  </h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Health Encyclopedia -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-gradient-to-r from-blue-400 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+        <i class="fas fa-book text-white text-xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Enciclopedia Médica</h3>
+      <p class="text-gray-600 text-sm mb-4">Información detallada sobre enfermedades, síntomas y tratamientos</p>
+      <button class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+        Explorar <i class="fas fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+
+    <!-- Appointment Booking -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-gradient-to-r from-green-400 to-green-600 rounded-xl flex items-center justify-center mb-4">
+        <i class="fas fa-calendar-plus text-white text-xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Agendar Cita</h3>
+      <p class="text-gray-600 text-sm mb-4">Programa una consulta con médicos especializados</p>
+      <button class="text-green-600 hover:text-green-800 text-sm font-medium">
+        Agendar <i class="fas fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+
+    <!-- Health Records -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 hover:shadow-lg transition-shadow">
+      <div class="w-12 h-12 bg-gradient-to-r from-purple-400 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+        <i class="fas fa-file-medical-alt text-white text-xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Historial Médico</h3>
+      <p class="text-gray-600 text-sm mb-4">Accede a tu historial y resultados de estudios</p>
+      <button class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+        Ver Historial <i class="fas fa-arrow-right ml-1"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Results Section -->
+{% if diagnosis %}
+<div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
+  <!-- Diagnosis and Recommendations -->
+  <div class="space-y-6">
+    <!-- Diagnosis Result -->
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-stethoscope text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Diagnóstico Preliminar</h3>
+            <p class="text-sm text-gray-600">Basado en los síntomas descritos</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="bg-blue-50 rounded-xl p-4 mb-4">
+          <h4 class="text-lg font-semibold text-blue-900">{{ diagnosis }}</h4>
+          <p class="text-sm text-blue-700 mt-1">Diagnóstico sugerido por el sistema</p>
+        </div>
+        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div class="flex items-start space-x-2">
+            <i class="fas fa-exclamation-triangle text-yellow-600 mt-1"></i>
+            <div>
+              <p class="text-sm text-yellow-800 font-medium">Importante</p>
+              <p class="text-xs text-yellow-700">Este es un diagnóstico preliminar. Consulta con un médico para confirmación.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommendations -->
+    {% if recommendations %}
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-heart text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Recomendaciones</h3>
+            <p class="text-sm text-gray-600">Cuidados y medidas sugeridas</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <ul class="space-y-3">
+          {% for rec in recommendations %}
+          <li class="flex items-start space-x-3 p-3 bg-purple-50 rounded-lg">
+            <i class="fas fa-check-circle text-purple-500 mt-1"></i>
+            <span class="text-gray-700">{{ rec }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Medications and Nearby Doctors -->
+  <div class="space-y-6">
+    <!-- Prescription -->
+    {% if medications %}
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-green-50 to-teal-50 p-6 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-pills text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Medicamentos Sugeridos</h3>
+            <p class="text-sm text-gray-600">Tratamiento recomendado</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <div class="space-y-4">
+          {% for med in medications %}
+          <div class="border border-gray-200 rounded-xl p-4">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <h4 class="font-semibold text-gray-900">{{ med.nombre }}</h4>
+                <p class="text-sm text-gray-600 mt-1">{{ med.dosis }}</p>
+                <div class="flex items-center space-x-4 mt-2">
+                  <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                    <i class="fas fa-clock mr-1"></i>{{ med.duracion }}
+                  </span>
+                </div>
+              </div>
+              <i class="fas fa-capsules text-green-500 text-xl"></i>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="mt-4 bg-red-50 border border-red-200 rounded-xl p-4">
+          <div class="flex items-start space-x-2">
+            <i class="fas fa-exclamation-circle text-red-500 mt-1"></i>
+            <div>
+              <p class="text-sm text-red-800 font-medium">Consulta Médica Requerida</p>
+              <p class="text-xs text-red-700">Estos medicamentos requieren prescripción médica profesional.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Nearby Doctors Map -->
+    {% if doctors %}
+    <div class="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200/50 overflow-hidden">
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 border-b border-gray-100">
+        <div class="flex items-center space-x-3">
+          <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <i class="fas fa-map-marker-alt text-white text-xl"></i>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900">Médicos Cercanos</h3>
+            <p class="text-sm text-gray-600">Ubicación aproximada de los especialistas</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-6">
+        <!-- Map Container -->
+        <div id="map" class="w-full h-64 bg-gray-100 rounded-xl mb-4 relative overflow-hidden">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center">
+              <i class="fas fa-map text-gray-400 text-3xl mb-2"></i>
+              <p class="text-gray-500 text-sm">Mapa de médicos cercanos</p>
+            </div>
+          </div>
+          <!-- Simulated map pins -->
+          <div class="absolute top-4 left-8 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+          <div class="absolute top-12 right-12 w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+          <div class="absolute bottom-8 left-16 w-4 h-4 bg-green-500 rounded-full animate-pulse"></div>
+          <div class="absolute bottom-16 right-8 w-4 h-4 bg-purple-500 rounded-full animate-pulse"></div>
+        </div>
+
+        <!-- Doctors List -->
+        <div class="space-y-3 max-h-80 overflow-y-auto">
+          {% for doctor in doctors %}
+          <div class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+              <div class="flex-1">
+                <div class="flex items-center space-x-2 mb-2">
+                  <h4 class="font-semibold text-gray-900">{{ doctor.nombre }}</h4>
+                  <div class="flex items-center space-x-1">
+                    {% for i in range(5) %}
+                      {% if i < doctor.rating %}
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                      {% else %}
+                        <i class="far fa-star text-gray-300 text-xs"></i>
+                      {% endif %}
+                    {% endfor %}
+                    <span class="text-xs text-gray-500">({{ doctor.rating }})</span>
+                  </div>
+                </div>
+                <p class="text-sm text-blue-600 font-medium mb-1">{{ doctor.especialidad }}</p>
+                <p class="text-xs text-gray-600 mb-2">{{ doctor.direccion }}</p>
+                <div class="flex items-center space-x-4">
+                  <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                    <i class="fas fa-walking mr-1"></i>{{ doctor.distancia }}
+                  </span>
+                  <a href="tel:{{ doctor.telefono }}" class="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full hover:bg-blue-200 transition-colors">
+                    <i class="fas fa-phone mr-1"></i>{{ doctor.telefono }}
+                  </a>
+                </div>
+              </div>
+              <div class="text-right">
+                <button onclick="showOnMap({{ doctor.lat }}, {{ doctor.lng }})" class="text-blue-500 hover:text-blue-700 text-sm">
+                  <i class="fas fa-map-marker-alt"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Map Actions -->
+        <div class="mt-4 flex justify-between items-center">
+          <button onclick="showAllDoctors()" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            <i class="fas fa-expand-arrows-alt mr-1"></i>Ver todos en mapa
+          </button>
+          <a href="https://maps.google.com/?q=medicos+cordoba+veracruz" target="_blank" class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition-colors">
+            <i class="fas fa-external-link-alt mr-1"></i>Abrir en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+<style>
+.symptom-btn {
+  @apply bg-white border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 transition-colors;
+}
+.symptom-btn.active {
+  @apply bg-blue-500 text-white border-blue-500;
+}
+
+#map {
+  background: linear-gradient(45deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+  position: relative;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+</style>
+
+<script>
+function addSymptom(symptom) {
+  const input = document.getElementById('symptomsInput');
+  const currentValue = input.value.trim();
+  
+  // Check if symptom already exists
+  const currentSymptoms = currentValue.split(',').map(s => s.trim().toLowerCase());
+  if (currentSymptoms.includes(symptom.toLowerCase())) {
+    return;
+  }
+  
+  if (currentValue) {
+    input.value = currentValue + ', ' + symptom;
+  } else {
+    input.value = symptom;
+  }
+  
+  // Visual feedback
+  event.target.classList.add('active');
+  setTimeout(() => {
+    event.target.classList.remove('active');
+  }, 300);
+}
+
+function showOnMap(lat, lng) {
+  // Simulate showing doctor on map
+  const mapPins = document.querySelectorAll('#map > div:not(.absolute.inset-0)');
+  mapPins.forEach(pin => {
+    pin.classList.remove('ring-4', 'ring-yellow-400');
+  });
+  
+  // Add highlight to a random pin (simulation)
+  const randomPin = mapPins[Math.floor(Math.random() * mapPins.length)];
+  if (randomPin) {
+    randomPin.classList.add('ring-4', 'ring-yellow-400');
+  }
+  
+  // Show notification
+  showNotification('Médico ubicado en el mapa', 'info');
+}
+
+function showAllDoctors() {
+  // Simulate showing all doctors
+  const mapPins = document.querySelectorAll('#map > div:not(.absolute.inset-0)');
+  mapPins.forEach((pin, index) => {
+    setTimeout(() => {
+      pin.classList.add('ring-4', 'ring-blue-400');
+      setTimeout(() => {
+        pin.classList.remove('ring-4', 'ring-blue-400');
+      }, 1000);
+    }, index * 200);
+  });
+  
+  showNotification('Mostrando todos los médicos cercanos', 'success');
+}
+
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  const colors = {
+    info: 'bg-blue-500',
+    success: 'bg-green-500',
+    warning: 'bg-yellow-500',
+    error: 'bg-red-500'
+  };
+  
+  notification.className = `fixed top-4 right-4 ${colors[type]} text-white px-4 py-2 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300`;
+  notification.innerHTML = `<i class="fas fa-info-circle mr-2"></i>${message}`;
+  
+  document.body.appendChild(notification);
+  
+  // Animate in
+  setTimeout(() => {
+    notification.classList.remove('translate-x-full');
+  }, 100);
+  
+  // Animate out and remove
+  setTimeout(() => {
+    notification.classList.add('translate-x-full');
+    setTimeout(() => {
+      notification.remove();
+    }, 300);
+  }, 3000);
+}
+
+// Auto-save symptoms as user types
+let saveTimeout;
+document.getElementById('symptomsInput').addEventListener('input', function() {
+  clearTimeout(saveTimeout);
+  saveTimeout = setTimeout(() => {
+    localStorage.setItem('currentSymptoms', this.value);
+  }, 1000);
+});
+
+// Load saved symptoms on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const savedSymptoms = localStorage.getItem('currentSymptoms');
+  if (savedSymptoms && !document.getElementById('symptomsInput').value) {
+    document.getElementById('symptomsInput').value = savedSymptoms;
+  }
+});
+
+// Clear saved symptoms on successful submission
+document.querySelector('form').addEventListener('submit', function() {
+  localStorage.removeItem('currentSymptoms');
+});
+
+// Simulated Google Maps integration
+function initMap() {
+  // This would be where you'd initialize a real Google Maps instance
+  console.log('Map initialized - integrate with Google Maps API for production');
+}
+
+// Initialize map simulation on page load
+document.addEventListener('DOMContentLoaded', initMap);
+</script>
+{% endblock %}
